@@ -17,7 +17,8 @@ public class MixinTitleScreen extends ScreenBase {
 	@SuppressWarnings("unchecked")
 	@Inject(at = @At("RETURN"), method = "init")
 	public void drawMenuButton(CallbackInfo info) {
-		Button texturePackButton = minecraft.isApplet ? (Button) this.buttons.get(this.buttons.size() - 2) : (Button) this.buttons.get(2);
+		Button texturePackButton = (Button) this.buttons.stream().filter(o -> ((Button) o).id == 3).findFirst().orElse(null);
+		if (texturePackButton == null) return;
 		texturePackButton.text = "Texture Packs";
 		int newWidth = ((MixinGuiButton) texturePackButton).getWidth() / 2 - 1;
 		((MixinGuiButton) texturePackButton).setWidth(newWidth);
