@@ -13,11 +13,10 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.class_285;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
-
+import net.minecraft.client.resource.pack.TexturePack;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -33,7 +32,7 @@ public class ModMenu implements ClientModInitializer {
 	public static final LinkedListMultimap<ModContainer, ModContainer> PARENT_MAP = LinkedListMultimap.create();
 	private static ImmutableMap<String, Function<Screen, ? extends Screen>> configScreenFactories = ImmutableMap.of();
 	private static int libraryCount = 0;
-	public static class_285 currentTexturePack;
+	public static TexturePack currentTexturePack;
 
 	public static boolean hasConfigScreenFactory(String modid) {
 		return configScreenFactories.containsKey(modid);

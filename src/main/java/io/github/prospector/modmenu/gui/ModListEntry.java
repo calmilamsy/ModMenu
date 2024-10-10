@@ -120,15 +120,19 @@ public class ModListEntry extends AlwaysSelectedEntryListWidget.Entry<ModListEnt
 	}
 
 	public void bindIconTexture() {
-		if (this.iconLocation == null) {
-			BufferedImage icon = this.createIcon();
-			if (icon != null) {
-				this.iconLocation = this.client.textureManager.method_1088(icon);
-			} else {
-				this.iconLocation = this.client.textureManager.getTextureId(UNKNOWN_ICON);
+		try {
+			if (this.iconLocation == null) {
+				BufferedImage icon = this.createIcon();
+				if (icon != null) {
+					this.iconLocation = this.client.textureManager.load(icon);
+				} else {
+					this.iconLocation = this.client.textureManager.getTextureId(UNKNOWN_ICON);
+				}
 			}
+			this.client.textureManager.bindTexture(this.iconLocation);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-		this.client.textureManager.bindTexture(this.iconLocation);
 	}
 
 	public void deleteTexture() {

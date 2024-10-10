@@ -63,7 +63,7 @@ public class ModMenuTexturedButtonWidget extends ButtonWidget {
 			tess.vertex(x, y, this.zOffset, (float) u * uScale, (float) adjustedV * vScale);
 			tess.draw();
 
-			this.method_1188(mc, mouseX, mouseY);
+			this.renderBackground(mc, mouseX, mouseY);
 			if (!this.active) {
 				this.drawCenteredTextWithShadow(font, this.text, this.x + this.width / 2, this.y + (this.height - 8) / 2, 0xffa0a0a0);
 			} else if (hovered) {
