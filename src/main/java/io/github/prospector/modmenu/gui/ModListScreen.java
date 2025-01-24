@@ -1,8 +1,5 @@
 package io.github.prospector.modmenu.gui;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.config.ModMenuConfigManager;
 import io.github.prospector.modmenu.util.BadgeRenderer;
@@ -29,6 +26,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModListScreen extends Screen {
 	private static final String FILTERS_BUTTON_LOCATION = "/assets/" + ModMenu.MOD_ID + "/textures/gui/filters_button.png";
@@ -347,14 +345,14 @@ public class ModListScreen extends Screen {
 
 			if (!names.isEmpty()) {
 				if (names.size() > 1) {
-					authors = Joiner.on(", ").join(names);
+					authors = String.join(", ", names);
 				} else {
 					authors = names.get(0);
 				}
 				RenderUtils.INSTANCE.drawWrappedString(font, "By " + authors, x + imageOffset, paneY + 2 + lineSpacing * 2, paneWidth - imageOffset - 4, 1, 0x808080);
 			}
 			if (this.tooltip != null) {
-				this.renderTooltip(Lists.newArrayList(Splitter.on("\n").split(this.tooltip)), mouseX, mouseY);
+				this.renderTooltip(this.tooltip.split("\n"), mouseX, mouseY);
 			}
 		}
 
@@ -410,8 +408,8 @@ public class ModListScreen extends Screen {
 		return filterOptionsShown;
 	}
 
-	public void renderTooltip(List<String> list, int i, int j) {
-		if (!list.isEmpty()) {
+	public void renderTooltip(String[] list, int i, int j) {
+		if (list.length > 0) {
 			TextRenderer font = textRenderer;
 
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -428,8 +426,8 @@ public class ModListScreen extends Screen {
 			int m = i + 12;
 			int n = j - 12;
 			int p = 8;
-			if (list.size() > 1) {
-				p += 2 + (list.size() - 1) * 10;
+			if (list.length > 1) {
+				p += 2 + (list.length - 1) * 10;
 			}
 
 			if (m + k > this.width) {
@@ -447,8 +445,8 @@ public class ModListScreen extends Screen {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(0, 0, 300);
 
-			for(int t = 0; t < list.size(); ++t) {
-				String string2 = list.get(t);
+			for(int t = 0; t < list.length; ++t) {
+				String string2 = list[t];
 				if (string2 != null) {
 					font.draw(string2, m, n, 0xffffff);
 				}

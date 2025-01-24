@@ -4,6 +4,7 @@ import io.github.prospector.modmenu.ModMenu;
 import io.github.prospector.modmenu.util.BadgeRenderer;
 import io.github.prospector.modmenu.util.HardcodedUtil;
 import io.github.prospector.modmenu.util.RenderUtils;
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -27,7 +28,8 @@ public class ModListEntry extends AlwaysSelectedEntryListWidget.Entry<ModListEnt
 
 	protected final Minecraft client;
 	protected final ModContainer container;
-	protected final ModMetadata metadata;
+	@Getter
+    protected final ModMetadata metadata;
 	protected final ModListWidget list;
 	protected Integer iconLocation;
 
@@ -115,20 +117,20 @@ public class ModListEntry extends AlwaysSelectedEntryListWidget.Entry<ModListEnt
 		return true;
 	}
 
-	public ModMetadata getMetadata() {
-		return metadata;
-	}
-
-	public void bindIconTexture() {
+    public void bindIconTexture() {
 		if (this.iconLocation == null) {
 			BufferedImage icon = this.createIcon();
 			if (icon != null) {
-				this.iconLocation = this.client.textureManager.method_1088(icon);
+				try {
+					this.iconLocation = this.client.textureManager.method_1088(icon);
+				} catch (Exception ignored) {}
 			} else {
 				this.iconLocation = this.client.textureManager.getTextureId(UNKNOWN_ICON);
 			}
 		}
-		this.client.textureManager.bindTexture(this.iconLocation);
+		if (iconLocation != null) {
+			this.client.textureManager.bindTexture(this.iconLocation);
+		}
 	}
 
 	public void deleteTexture() {

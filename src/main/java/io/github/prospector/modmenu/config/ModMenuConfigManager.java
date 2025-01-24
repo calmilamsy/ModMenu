@@ -1,34 +1,35 @@
 package io.github.prospector.modmenu.config;
 
 import io.github.prospector.modmenu.ModMenu;
+import lombok.Getter;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
+import java.util.Properties;
 
 public class ModMenuConfigManager {
 	private static File file;
-	private static ModMenuConfig config;
+	@Getter
+    private static ModMenuConfig config;
 
-	private static void prepareBiomeConfigFile() {
+	private static void prepareConfigFile() {
 		if (file != null) {
 			return;
 		}
-		file = new File(FabricLoader.getInstance().getConfigDirectory(), ModMenu.MOD_ID + ".json");
+		file = new File(FabricLoader.getInstance().getConfigDir().toFile(), ModMenu.MOD_ID + ".properties");
 	}
 
-	public static ModMenuConfig initializeConfig() {
+	public static void initializeConfig() {
 		if (config != null) {
-			return config;
+			return;
 		}
 
 		config = new ModMenuConfig();
 		load();
-
-		return config;
 	}
 
 	private static void load() {
-		prepareBiomeConfigFile();
+		prepareConfigFile();
 
 		try {
 			if (!file.exists()) {
@@ -37,28 +38,26 @@ public class ModMenuConfigManager {
 			if (file.exists()) {
 				BufferedReader br = new BufferedReader(new FileReader(file));
 
-				config = ModMenu.GSON.fromJson(br, ModMenuConfig.class);
+				Properties modProps = new Properties();
+				modProps.load(br);
+				config = new ModMenuConfig();
+				config.deserialize(modProps);
 			}
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			System.err.println("Couldn't load Mod Menu configuration file; reverting to defaults");
 			e.printStackTrace();
-		}
-	}
+        }
+    }
 
 	public static void save() {
-		prepareBiomeConfigFile();
-
-		String jsonString = ModMenu.GSON.toJson(config);
+		prepareConfigFile();
 
 		try (FileWriter fileWriter = new FileWriter(file)) {
-			fileWriter.write(jsonString);
+			config.serialize().store(fileWriter, "ModMenu Config");
 		} catch (IOException e) {
 			System.err.println("Couldn't save Mod Menu configuration file");
 			e.printStackTrace();
 		}
 	}
 
-	public static ModMenuConfig getConfig() {
-		return config;
-	}
 }

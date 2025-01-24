@@ -1,13 +1,16 @@
 package io.github.prospector.modmenu.config;
 
 import io.github.prospector.modmenu.util.HardcodedUtil;
+import lombok.Getter;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.util.Comparator;
+import java.util.Properties;
 
 public class ModMenuConfig {
 	private boolean showLibraries = false;
-	private Sorting sorting = Sorting.ASCENDING;
+	@Getter
+    private Sorting sorting = Sorting.ASCENDING;
 
 	public void toggleShowLibraries() {
 		this.showLibraries = !this.showLibraries;
@@ -23,28 +26,30 @@ public class ModMenuConfig {
 		return showLibraries;
 	}
 
-	public Sorting getSorting() {
-		return sorting;
+	public Properties serialize() {
+		Properties properties = new Properties();
+		properties.put("showLibraries", showLibraries ? "true" : "false");
+		properties.put("sorting", sorting.name());
+		return properties;
 	}
 
-	public static enum Sorting {
+	public void deserialize(Properties properties) {
+		showLibraries = properties.getOrDefault("showLibraries", "false").equals("true");
+		sorting = Sorting.valueOf((String) properties.getOrDefault("sorting", "ASCENDING"));
+    }
+
+    @Getter
+    public enum Sorting {
 		ASCENDING(Comparator.comparing(modContainer -> HardcodedUtil.formatFabricModuleName(modContainer.getMetadata().getName())), "A-Z"),
 		DECENDING(ASCENDING.getComparator().reversed(), "Z-A");
 
-		Comparator<ModContainer> comparator;
-		String name;
+		final Comparator<ModContainer> comparator;
+		final String name;
 
 		Sorting(Comparator<ModContainer> comparator, String name) {
 			this.comparator = comparator;
 			this.name = name;
 		}
 
-		public Comparator<ModContainer> getComparator() {
-			return comparator;
-		}
-
-		public String getName() {
-			return name;
-		}
-	}
+    }
 }

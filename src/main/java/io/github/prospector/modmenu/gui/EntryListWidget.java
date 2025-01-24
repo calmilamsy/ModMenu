@@ -1,17 +1,17 @@
 package io.github.prospector.modmenu.gui;
 
-import com.google.common.collect.Lists;
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -472,7 +472,7 @@ public abstract class EntryListWidget<E extends EntryListWidget.Entry<E>> extend
 		private final List<E> entries;
 
 		private Entries() {
-			this.entries = Lists.newArrayList();
+			this.entries = new ArrayList<>();
 		}
 
 		public E get(int i) {

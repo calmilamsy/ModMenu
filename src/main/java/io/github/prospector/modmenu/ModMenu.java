@@ -1,10 +1,5 @@
 package io.github.prospector.modmenu;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import io.github.prospector.modmenu.config.ModMenuConfigManager;
 import io.github.prospector.modmenu.util.HardcodedUtil;
@@ -24,14 +19,13 @@ import java.util.function.Function;
 
 public class ModMenu implements ClientModInitializer {
 	public static final String MOD_ID = "modmenu";
-	public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setPrettyPrinting().create();
 
 	private static final Map<String, Runnable> LEGACY_CONFIG_SCREEN_TASKS = new HashMap<>();
 	public static final List<String> LIBRARY_MODS = new ArrayList<>();
 	public static final Set<String> CLIENTSIDE_MODS = new HashSet<>();
 	public static final Set<String> PATCHWORK_FORGE_MODS = new HashSet<>();
-	public static final LinkedListMultimap<ModContainer, ModContainer> PARENT_MAP = LinkedListMultimap.create();
-	private static ImmutableMap<String, Function<Screen, ? extends Screen>> configScreenFactories = ImmutableMap.of();
+	public static final Map<ModContainer, List<ModContainer>> PARENT_MAP = new HashMap<>();
+	private static Map<String, Function<Screen, ? extends Screen>> configScreenFactories = new HashMap<>();
 	private static int libraryCount = 0;
 	public static class_285 currentTexturePack;
 
@@ -66,10 +60,8 @@ public class ModMenu implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ModMenuConfigManager.initializeConfig();
-		ImmutableMap.Builder<String, Function<Screen, ? extends Screen>> factories = ImmutableMap.builder();
-		FabricLoader.getInstance().getEntrypoints("modmenu", ModMenuApi.class).forEach(api -> factories.put(api.getModId(), api.getConfigScreenFactory()));
-		factories.put("minecraft", (screenBase -> new OptionsScreen(screenBase, ((Minecraft) FabricLoader.getInstance().getGameInstance()).options)));
-		configScreenFactories = factories.build();
+		FabricLoader.getInstance().getEntrypoints("modmenu", ModMenuApi.class).forEach(api -> configScreenFactories.put(api.getModId(), api.getConfigScreenFactory()));
+		configScreenFactories.put("minecraft", (screenBase -> new OptionsScreen(screenBase, ((Minecraft) FabricLoader.getInstance().getGameInstance()).options)));
 		Collection<ModContainer> mods = FabricLoader.getInstance().getAllMods();
 		HardcodedUtil.initializeHardcodings();
 		for (ModContainer mod : mods) {
@@ -100,7 +92,12 @@ public class ModMenu implements ClientModInitializer {
 				String parentId = metadata.getCustomValue("modmenu:parent").getAsString();
 				if (parentId != null) {
 					Optional<ModContainer> parent = FabricLoader.getInstance().getModContainer(parentId);
-					parent.ifPresent(modContainer -> PARENT_MAP.put(modContainer, mod));
+					parent.ifPresent(modContainer -> {
+						if (PARENT_MAP.containsKey(modContainer)) {
+							PARENT_MAP.put(modContainer, new ArrayList<>());
+						}
+						PARENT_MAP.get(modContainer).add(mod);
+					});
 				}
 			} else {
 				HardcodedUtil.hardcodeModuleMetadata(mod, metadata, id);
