@@ -107,7 +107,7 @@ publishing {
 
     publications {
         register("mavenJava", MavenPublication::class) {
-            artifactId = project.properties["archives_base_name"] as String
+            artifactId = project.name
             from(components["java"])
         }
     }
