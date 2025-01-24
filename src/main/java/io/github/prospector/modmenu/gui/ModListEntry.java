@@ -122,7 +122,7 @@ public class ModListEntry extends AlwaysSelectedEntryListWidget.Entry<ModListEnt
 			BufferedImage icon = this.createIcon();
 			if (icon != null) {
 				try {
-					this.iconLocation = this.client.textureManager.method_1088(icon);
+					this.iconLocation = this.client.textureManager.load(icon);
 				} catch (Exception ignored) {}
 			} else {
 				this.iconLocation = this.client.textureManager.getTextureId(UNKNOWN_ICON);

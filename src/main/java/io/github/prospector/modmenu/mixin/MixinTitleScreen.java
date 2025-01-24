@@ -39,7 +39,7 @@ public class MixinTitleScreen extends Screen {
 	@Inject(method = "buttonClicked", at = @At("HEAD"))
 	private void onActionPerformed(ButtonWidget button, CallbackInfo ci) {
 		if (button.id == 1 || button.id == 2) {
-			ModMenu.currentTexturePack = this.minecraft.field_2768.field_1175;
+			ModMenu.currentTexturePack = this.minecraft.texturePacks.selected;
 		}
 		if (button.id == 100) {
 			minecraft.setScreen(new ModListScreen(this));
